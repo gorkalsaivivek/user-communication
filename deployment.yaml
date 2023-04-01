@@ -1,0 +1,39 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: user-communication
+spec:
+  selector:
+    app: user-communication
+  ports:
+    - protocol: TCP
+      port: 8081
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-communication
+spec:
+  selector:
+    matchLabels:
+      app: user-communication
+  replicas: 3
+  minReadySeconds: 45
+  selector:
+    matchLabels:
+      app: user-communication
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate  
+  template:
+    metadata:
+      labels:
+        app: user-communication
+    spec:
+      containers:
+        - image: 7039402000/user-communication:1
+          name: user-communication
+          imagePullPolicy: IfNotPresent
